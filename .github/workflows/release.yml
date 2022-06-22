@@ -38,9 +38,8 @@ jobs:
           ./hack/build.sh
 
       - name: Run Package build
-        working-directory: ./carvel
         run: |
-          ./../carvel-kapp-controller/cli/kctrl pkg build create -y -v 1.0.0
+          ./carvel-kapp-controller/cli/kctrl pkg build create -y -v 1.0.0
             
 
 
