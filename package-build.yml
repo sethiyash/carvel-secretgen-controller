@@ -59,7 +59,7 @@ spec:
           path: ../../config/package-bundle/contents
         path: file
       - directory:
-          path: ../../config/dev
+          path: ../../config/release
         path: val
       path: config/upstream
     kind: Config
