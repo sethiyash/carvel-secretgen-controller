@@ -13,7 +13,6 @@ yq eval '.metadata.annotations."secretgen-controller.carvel.dev/version" = env(v
 
 ytt -f config/package-bundle/contents -f config/release -v dev.version="$version" | kbld --imgpkg-lock-output config/package-bundle/.imgpkg/images.yml -f- > ./tmp/release.yml
 
-echo "yash"
 imgpkg push -b ghcr.io/vmware-tanzu/carvel-secretgen-controller-package-bundle:"$version" -f config/package-bundle --lock-output ./bundle-image.yml
 
 # generate openapi schema for package
