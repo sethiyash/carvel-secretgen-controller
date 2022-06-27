@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Package build
         run: |
-          ./carvel-kapp-controller/cli/kctrl pkg build create -y -v 1.0.0
+          ./carvel-kapp-controller/cli/kctrl pkg build create -y -v ${{github.ref_name}}
 
       - name: Upload package and package-metadata yaml
         uses: softprops/action-gh-release@v1
