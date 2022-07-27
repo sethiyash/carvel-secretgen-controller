@@ -17,7 +17,9 @@ spec:
               paths:
               - config/package-bundle/config
               - config/release
-          - kbld: {}
+          - kbld:
+              paths:
+              - config/release
       export:
       - imgpkgBundle:
           image: ysethiya/testsgc
