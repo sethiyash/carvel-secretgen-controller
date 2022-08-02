@@ -15,13 +15,11 @@ spec:
           template:
           - ytt:
               paths:
-              - config/package-bundle/config
-              - config/release
+              - config
           - kbld: {}
       export:
       - imgpkgBundle:
           image: ysethiya/testsgc
           useKbldImagesLock: true
         includePaths:
-        - config/package-bundle/config
-        - config/release
+        - config
