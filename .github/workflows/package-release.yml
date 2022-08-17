@@ -107,6 +107,8 @@ jobs:
                 constraints: "${constraintVersion:1}"
           EOF
 
+          cat pkgi.yml
+
           kapp deploy -a sg -f carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml -f carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml -f pkgi.yml -y
 
           export SECRETGEN_E2E_NAMESPACE=secretgen-test
