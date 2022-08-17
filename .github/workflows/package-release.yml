@@ -112,6 +112,7 @@ jobs:
 
           kapp deploy -a sg -f carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml -f carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml -f pkgi.yml -y
 
+          kubectl get packageinstall/secretgen-controller -o yaml
           export SECRETGEN_E2E_NAMESPACE=secretgen-test
 
           ./hack/test-e2e.sh
