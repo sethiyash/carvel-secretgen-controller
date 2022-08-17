@@ -67,7 +67,7 @@ jobs:
 
       - name: Run Package build
         run: |
-          ./carvel-kapp-controller/cli/kctrl pkg release -y -v 1.0.0 --debug
+          ./carvel-kapp-controller/cli/kctrl pkg release -y -v ${{constraintVersion:1}} --debug
 
       - name: Check Package and Metadata file generated
         run: |
