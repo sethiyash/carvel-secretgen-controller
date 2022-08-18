@@ -23,7 +23,7 @@ spec:
               - config/release
       export:
       - imgpkgBundle:
-          image: ysethiya/secretgen-controller2
+          image: ysethiya/secretgen-controller
           useKbldImagesLock: true
         includePaths:
         - config/package-bundle/config
