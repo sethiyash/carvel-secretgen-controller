@@ -51,8 +51,6 @@ jobs:
           body_path: ./tmp/checksums.txt
           files: |
             ./tmp/release.yml
-            # ./tmp/package.yml
-            # ./tmp/package-metadata.yml
           draft: true
       - name: Get uploaded release YAML checksum
         uses: actions/github-script@v6
@@ -97,8 +95,6 @@ jobs:
             }
             console.log(checksums)
             return `${checksums['release.yml']}  ./tmp/release.yml
-            ${checksums['package.yml']}  ./tmp/package.yml
-            ${checksums['package-metadata.yml']}  ./tmp/package-metadata.yml`
       - name: Verify uploaded artifacts
         if: startsWith(github.ref, 'refs/tags/')
         env:
