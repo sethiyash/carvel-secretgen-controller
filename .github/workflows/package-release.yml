@@ -69,10 +69,6 @@ jobs:
         run: |
           constraintVersion="${{ github.ref_name }}"
           ./carvel-kapp-controller/cli/kctrl pkg release -y -v ${constraintVersion:1} --debug
-
-      - name: Check Package and Metadata file generated
-        run: |
-          ls -la carvel-artifacts/packages/secretgen-controller.carvel.dev
       
       - name: Create draft release with package and metadata
         uses: softprops/action-gh-release@17cd0d34deddf848fc0e7d9be5202c148c270a0a
