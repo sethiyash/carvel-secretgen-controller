@@ -19,10 +19,11 @@ spec:
               - config/release
           - kbld:
               paths:
+              - '-'
               - config/release
       export:
       - imgpkgBundle:
-          image: ysethiya/secretgen-controller
+          image: ysethiya/secretgen-controller2
           useKbldImagesLock: true
         includePaths:
         - config/package-bundle/config
