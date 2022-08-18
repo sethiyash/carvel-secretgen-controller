@@ -9,4 +9,4 @@ dev:
   #@schema/desc "Development version"
   version: develop
   #@schema/desc "Comma separated list of supported architectures"
-  platform: "linux/amd64"
+  platform: "linux/amd64,linux/arm64"
