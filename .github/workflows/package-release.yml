@@ -4,7 +4,7 @@ name: sgc-release
 on:
   push:
     tags:
-      - "v*"
+      - "v1*"
 
 jobs:
   sgcreleaser:
@@ -55,24 +55,11 @@ jobs:
         working-directory: ./carvel-kapp-controller/cli
         run: |
           ./hack/build.sh
-      
-      # - name: Set Versions
-      #   uses: actions/github-script@v4
-      #   id: set_version
-      #   with:
-      #     script: |
-      #       const tag = context.ref.substring(10)
-      #       const no_v = tag.replace('v', '')
-      #       core.setOutput('no-v', no_v)
 
       - name: Run Package build
         run: |
           constraintVersion="${{ github.ref_name }}"
           ./carvel-kapp-controller/cli/kctrl pkg release -y -v ${constraintVersion:1} --debug
-
-      - name: Check Package and Metadata file generated
-        run: |
-          ls -la carvel-artifacts/packages/secretgen-controller.carvel.dev
       
       - name: Create draft release with package and metadata
         uses: softprops/action-gh-release@17cd0d34deddf848fc0e7d9be5202c148c270a0a
