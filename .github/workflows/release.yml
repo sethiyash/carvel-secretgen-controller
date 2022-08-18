@@ -19,13 +19,7 @@ jobs:
           go-version: 1.18
       - name: Install Carvel Tools
         uses: vmware-tanzu/carvel-setup-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          only: ytt, kapp, kbld, imgpkg
-          ytt: v0.40.1
-          kapp: v0.47.0
-          kbld: v0.34.0
-          imgpkg: v0.29.0
+
       # - name: Login to GitHub Container Registry
       #   uses: docker/login-action@v2
       #   with:
@@ -43,6 +37,31 @@ jobs:
           minikube start --driver=docker --wait=all
           docker buildx create minikube --use --driver=kubernetes --bootstrap
           ./hack/build-and-publish-release.sh
+      
+      - name: Fetch kctrl
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+          repository: vmware-tanzu/carvel-kapp-controller
+          path: carvel-kapp-controller
+          fetch-depth: 0
+
+      - name: Build kctrl
+        working-directory: ./carvel-kapp-controller/cli
+        run: |
+          ./hack/build.sh
+      
+      - name: Run Package build
+        run: |
+          constraintVersion="${{ github.ref_name }}"
+          ./carvel-kapp-controller/cli/kctrl pkg release -y -v ${constraintVersion:1} --debug
+      
+      - name: Checksum
+        run: |
+          shasum -a 256 ./tmp/release.yml | tee ./tmp/checksums.txt
+          shasum -a 256 carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml | tee -a ./tmp/checksums.txt
+          shasum -a 256 carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml | tee -a ./tmp/checksums.txt
+      
       - name: Create release draft and upload release yaml
         uses: softprops/action-gh-release@17cd0d34deddf848fc0e7d9be5202c148c270a0a
         with:
@@ -51,6 +70,8 @@ jobs:
           body_path: ./tmp/checksums.txt
           files: |
             ./tmp/release.yml
+            carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml
+            carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml
           draft: true
       - name: Get uploaded release YAML checksum
         uses: actions/github-script@v6
@@ -85,6 +106,7 @@ jobs:
                       });
                       stream.on('end', function () {
                         checksums[asset.name]= hash.digest('hex');
+                        console.log(asset.name)
                         resolve(`${asset.name}`);
                       });
                     });
@@ -94,7 +116,10 @@ jobs:
               }
             }
             console.log(checksums)
-            return `${checksums['release.yml']}  ./tmp/release.yml`
+            return `${checksums['release.yml']} ./tmp/release.yml
+            ${checksums['package.yml']} carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml
+            ${checksums['metadata.yml']} carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml`
+
       - name: Verify uploaded artifacts
         if: startsWith(github.ref, 'refs/tags/')
         env:
@@ -106,3 +131,35 @@ jobs:
           ${{steps.get-checksums-from-draft-release.outputs.result}}
           EOF
           )
+      - name: Run PackageCR Validation Tests
+        run: |
+          set -e -x
+
+          # deploy admin sa for secretgen-controller - enough permissions for SGC to be deployed properly
+          kapp deploy -a rbac -f https://raw.githubusercontent.com/vmware-tanzu/carvel-kapp-controller/develop/examples/rbac/cluster-admin.yml -y
+
+          # Kapp-controller is needed for our PackageInstall
+          kapp deploy -a kc -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml -y
+
+          constraintVersion="${{ github.ref_name }}"
+          cat << EOF > pkgi.yml
+          ---
+          apiVersion: packaging.carvel.dev/v1alpha1
+          kind: PackageInstall
+          metadata:
+            name: secretgen-controller
+          spec:
+            serviceAccountName: cluster-admin-sa
+            packageRef:
+              refName: secretgen-controller.carvel.dev
+              apiVersion: packaging.carvel.dev/v1alpha1
+              versionSelection:
+                constraints: "${constraintVersion:1}"
+          EOF
+
+          kapp deploy -a sg -f carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml -f carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml -f pkgi.yml -y
+
+          kubectl get packageinstall/secretgen-controller -o yaml
+          export SECRETGEN_E2E_NAMESPACE=secretgen-test
+
+          ./hack/test-e2e.sh
