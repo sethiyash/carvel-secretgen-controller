@@ -20,7 +20,6 @@ spec:
           - kbld:
               paths:
               - '-'
-              - config/release
       export:
       - imgpkgBundle:
           image: ysethiya/secretgen-controller
