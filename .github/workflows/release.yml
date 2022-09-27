@@ -46,16 +46,16 @@ jobs:
           repository: vmware-tanzu/carvel-kapp-controller
           path: carvel-kapp-controller
           fetch-depth: 0
-      - name: Build kctrl
-        working-directory: ./carvel-kapp-controller/cli
-        run: |
-          ./hack/build.sh
+      # - name: Build kctrl
+      #   working-directory: ./carvel-kapp-controller/cli
+      #   run: |
+      #     ./hack/build.sh
 
       
       - name: Run Package build
         run: |
           constraintVersion="${{ github.ref_name }}"
-          ./carvel-kapp-controller/cli/kctrl pkg release -y -v ${constraintVersion:1} --debug
+          kctrl pkg release -y -v ${constraintVersion:1} --debug
       - name: Checksum
         run: |
           shasum -a 256 ./tmp/release.yml | tee ./tmp/checksums.txt
