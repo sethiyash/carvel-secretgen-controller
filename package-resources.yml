@@ -17,8 +17,7 @@ spec:
       template:
       - ytt:
           paths:
-          - config/package-bundle/config
-          - config/release
+          - tmp/output-ytt.yml
       - kbld: {}
   valuesSchema:
     openAPIv3: null
