@@ -143,10 +143,12 @@ jobs:
 
           constraintVersion="${{ github.ref_name }}"
 
-          kapp deploy -a sg -f carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml -f carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml -y
+          kubectl create ns sg
+
+          kapp deploy -a sg -f carvel-artifacts/packages/secretgen-controller.carvel.dev/package.yml -f carvel-artifacts/packages/secretgen-controller.carvel.dev/metadata.yml -n sg -y
 
           # installing pkg with kctrl
-          kctrl pkg install -p secretgen-controller.carvel.dev -i scg --version ${constraintVersion:1}
+          kctrl pkg install -p secretgen-controller.carvel.dev -i scg --version ${constraintVersion:1} -n sg
           
           export SECRETGEN_E2E_NAMESPACE=secretgen-test
 
