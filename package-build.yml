@@ -15,7 +15,8 @@ spec:
           template:
           - ytt:
               paths:
-              - tmp/output-ytt.yml
+              - config/package-bundle/config
+              - tmp/output-config.yml
           - kbld:
               paths:
               - '-'
@@ -24,4 +25,5 @@ spec:
           image: ysethiya/secretgen-controller
           useKbldImagesLock: true
         includePaths:
-        - tmp/output-ytt.yml
+        - config/package-bundle/config
+        - tmp/output-config.yml
