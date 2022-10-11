@@ -16,16 +16,15 @@ spec:
           - ytt:
               paths:
               - config/package-bundle/config
-              - tmp/output-config.yml
+              - config/relase-config.yml
           - kbld:
               paths:
               - '-'
-              - config/package-bundle/.imgpkg/images.yml
+              - .imgpkg/images.yml
       export:
       - imgpkgBundle:
           image: ysethiya/secretgen-controller
-          useKbldImagesLock: false
         includePaths:
         - config/package-bundle/config
-        - tmp/output-config.yml
-        - config/package-bundle/.imgpkg/images.yml
+        - config/relase-config.yml
+        - .imgpkg/images.yml
