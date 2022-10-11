@@ -20,10 +20,12 @@ spec:
           - kbld:
               paths:
               - '-'
+              - config/package-bundle/.imgpkg/images.yml
       export:
       - imgpkgBundle:
           image: ysethiya/secretgen-controller
-          useKbldImagesLock: true
+          useKbldImagesLock: false
         includePaths:
         - config/package-bundle/config
         - tmp/output-config.yml
+        - config/package-bundle/.imgpkg/images.yml
