@@ -26,7 +26,6 @@ jobs:
           kbld: v0.34.0
           imgpkg: v0.29.0
           vendir: v0.30.0
-          kctrl: v0.41.2
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -39,17 +38,17 @@ jobs:
           docker buildx create minikube --use --driver=kubernetes --bootstrap
           ./hack/build-and-publish-release.sh
       
-      # - name: Fetch kctrl
-      #   uses: actions/checkout@v3
-      #   with:
-      #     ref: develop
-      #     repository: vmware-tanzu/carvel-kapp-controller
-      #     path: carvel-kapp-controller
-      #     fetch-depth: 0
-      # - name: Build kctrl
-      #   working-directory: ./carvel-kapp-controller/cli
-      #   run: |
-      #     ./hack/build.sh
+      - name: Fetch kctrl
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+          repository: vmware-tanzu/carvel-kapp-controller
+          path: carvel-kapp-controller
+          fetch-depth: 0
+      - name: Build kctrl
+        working-directory: ./carvel-kapp-controller/cli
+        run: |
+          ./hack/build.sh
 
       
       - name: Run Package build
