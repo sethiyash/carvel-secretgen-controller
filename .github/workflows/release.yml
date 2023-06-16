@@ -84,6 +84,11 @@ jobs:
             const https = require('https');
             checksums = {}
             for (const r of releases["data"]) {
+              console.log("Debug")
+              console.log(r.draft)
+              console.log(r.draft && `refs/tags/${r.tag_name}`)
+              console.log(`refs/tags/${r.tag_name}`)
+              console.log("${{ github.ref }}")
               if (r.draft && `refs/tags/${r.tag_name}` == "${{ github.ref }}") {
                 for (const asset of r.assets) {
                   var release_asset = await github.rest.repos.getReleaseAsset({ headers: {accept: `application/octet-stream`}, accept: `application/octet-stream`, owner: owner, repo: repo, asset_id: asset.id });
