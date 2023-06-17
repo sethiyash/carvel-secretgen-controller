@@ -82,13 +82,10 @@ jobs:
             const url = require('url');
             const https = require('https');
             checksums = {}
+            var noReleaseMatched = true;
             for (const r of releases["data"]) {
-              console.log("Debug")
-              console.log(r.draft)
-              console.log(r.draft && `refs/tags/${r.tag_name}`)
-              console.log(`refs/tags/${r.tag_name}`)
-              console.log("${{ github.ref }}")
               if (r.draft && `refs/tags/${r.tag_name}` == "${{ github.ref }}") {
+                noReleaseMatched = false;
                 console.log("Assets")
                 console.log(r.assets)
                 for (const asset of r.assets) {
@@ -97,7 +94,7 @@ jobs:
                   console.log(release_asset)
                   const hash = crypto.createHash('sha256');
                   let http_promise = new Promise((resolve, reject) => {
-                    https.get(release_asset.url, (stream) => {
+                    https.get("https://raw.githubusercontent.com/kubernetes/website/main/content/en/examples/service/load-balancer-example2.yaml", (stream) => {
                       stream.on('data', function (data) {
                         hash.update(data);
                       });
@@ -108,7 +105,17 @@ jobs:
                     });
                   });
                   await http_promise;
+                  http_promise.then(
+                    (result) => {
+                        console.log("result success checksum")
+                        console.log(checksums);
+                    },
+                    (error) => {
+                        console.log('We have encountered an Error!'); // Log an error
+                    });
                 }
+              } else if (noReleaseMatched) {
+                console.log("No release matched")
               }
             }
             console.log(checksums)
