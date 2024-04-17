@@ -24,7 +24,7 @@ jobs:
       - name: Set up Cosign
         uses: sigstore/cosign-installer@v3
       - name: Install Carvel Tools
-        uses: carvel-dev/setup-action@v1
+        uses: carvel-dev/setup-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           only: ytt, kapp, kbld, imgpkg, kctrl, vendir
@@ -32,7 +32,7 @@ jobs:
           kapp: v0.58.0
           kbld: v0.37.5
           imgpkg: v0.37.3
-          kctrl: v0.46.2
+          kctrl: v0.50.2
           vendir: v0.34.4
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -44,7 +44,7 @@ jobs:
         run: |
           set -e -x
           minikube start --driver=docker --wait=all
-          docker buildx create minikube --use --driver=kubernetes --bootstrap
+          docker buildx create --name minikube --use --driver=kubernetes --bootstrap
           ./hack/build-and-publish-release.sh
           mkdir release
           cp ./tmp/release.yml release/
