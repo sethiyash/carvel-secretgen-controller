@@ -154,12 +154,20 @@ jobs:
           pushd release
           shasum -a 256 ./release.yml ./package.yml ./package-metadata.yml | tee ../tmp/checksums.txt
           popd
+          echo "Print release notes"
+          cat ./tmp/release_notes.txt
           cat ./tmp/checksums.txt | tee -a ./tmp/release_notes.txt
+          echo "Print release notes 2"
+          cat ./tmp/release_notes.txt
           cp ./tmp/checksums.txt release/checksums.txt
         
       - name: Sign checksums.txt
         run: |
             cosign sign-blob --yes ./tmp/checksums.txt --output-certificate release/checksums.txt.pem  --output-signature release/checksums.txt.sig
+            echo "Print release/checksums.txt"
+            cat release/checksums.txt
+            echo "Print release notes 3"
+            cat ./tmp/release_notes.txt
       - name: Verify checksums signature
         run: |
           cosign verify-blob \
